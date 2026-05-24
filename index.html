@@ -1,13 +1,125 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>SBBF Incremental</title>
-</head>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      // globals
+      textCounter = 0;
+      timeouts = [];
 
-<body>
-    <h1>Welcome to</h1>
-    <h2>SBBF Incremental</h2>
-    <p>Press start to begin</p>
-</body>
+      // Functions
+
+      function tw(txt, id, speed, delay) {
+        var i = 0;
+        twMain(txt, id, speed, delay);
+        function twMain(txt, id, speed, delay) {
+          if (i < txt.length) {
+            document.getElementById(id).innerHTML += txt.charAt(i);
+            i++;
+            if (i == txt.length) {
+              timeouts.push(setTimeout(twMain, delay, txt, id, speed, delay));
+            } else {
+              timeouts.push(setTimeout(twMain, speed, txt, id, speed, delay));
+            }
+          } else {
+            document.getElementById(id).innerHTML = ">";
+          }
+        }
+      }
+
+      function clearTimes() {
+        for (var a = 0; a < timeouts.length; a++) {
+          clearTimeout(timeouts[a]);
+        }
+        timeouts = [];
+      }
+
+      function firstWake() {
+        document.getElementById("wake1").setAttribute("hidden", "true");
+        document.getElementById("wake2").removeAttribute("hidden");
+      }
+
+      function secondWake() {
+        document.getElementById("wake2").setAttribute("hidden", "true");
+        document.getElementById("wake3").removeAttribute("hidden");
+      }
+
+      function thirdWake() {
+        document.getElementById("wake3").setAttribute("hidden", "true");
+        storyWake();
+      }
+
+      function storyWake() {
+        document.getElementById("maintext").removeAttribute("hidden");
+        document.getElementById("continue").removeAttribute("hidden");
+        console.log(textCounter);
+        var txt1 = "...";
+        var txt2 = "Where... where am I...";
+        var txt3 = "...";
+        var txt4 = "What... what is that?";
+        var txt5 =
+          "You slowly lift yourself up, and head towards a shining object on the ground a few meters away.";
+        switch (textCounter) {
+          case 0:
+            tw(txt1, "maintext", 500, 3000);
+            break;
+          case 1:
+            clearTimes();
+            document.getElementById("maintext").innerHTML = ">";
+            tw(txt2, "maintext", 50, 3000);
+            break;
+          case 2:
+            clearTimes();
+            document.getElementById("maintext").innerHTML = ">";
+            tw(txt3, "maintext", 500, 3000);
+            break;
+          case 3:
+            clearTimes();
+            document.getElementById("maintext").innerHTML = ">";
+            tw(txt4, "maintext", 50, 3000);
+            break;
+          case 4:
+            clearTimes();
+            document.getElementById("maintext").innerHTML = ">";
+            tw(txt5, "maintext", 50, 3000);
+        }
+        textCounter++;
+        if (textCounter > 4) {
+          textCounter = 0;
+          document.getElementById("continue").setAttribute("hidden", "true");
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="hcenter">
+      <button type="button" id="wake1" class="wake" onclick="firstWake()">
+        Wake Up.
+      </button>
+      <button
+        hidden="true"
+        id="wake2"
+        type="button"
+        class="wake2"
+        onclick="secondWake()"
+      >
+        Wake Up.
+      </button>
+      <button
+        hidden="true"
+        type="button"
+        id="wake3"
+        class="wake3"
+        onclick="thirdWake()"
+      >
+        WAKE UP.
+      </button>
+    </div>
+
+    <p id="maintext" hidden="true">></p>
+    <button id="continue" onclick="storyWake()" hidden="true">Continue</button>
+  </body>
 </html>
